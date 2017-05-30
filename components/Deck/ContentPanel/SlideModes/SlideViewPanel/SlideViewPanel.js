@@ -11,10 +11,16 @@ const ReactDOM = require('react-dom');
 class SlideViewPanel extends React.Component {
     constructor(props){
         super(props);
-
-
-
     }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if(this.props.SlideViewStore.content !== nextProps.SlideViewStore.content) {
+            return true;
+        }
+
+        return false;
+    }
+
     render() {
 
         //styles should match slideContentEditor for consistency

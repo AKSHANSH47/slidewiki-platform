@@ -10,6 +10,18 @@ import SlideEditPanel from './SlideModes/SlideEditPanel/SlideEditPanel';
 import NoPermissionsModal from './NoPermissionsModal';
 
 class ContentPanel extends React.Component {
+    shouldComponentUpdate(nextProps, nextState) {
+
+        if(this.props.ContentStore.mode !== nextProps.ContentStore.mode) {
+            return true;
+        }
+        if(this.props.ContentStore.selector.sid !== nextProps.ContentStore.selector.sid) {
+            return true;
+        }
+
+        return false;
+    }
+
     render() {
         let targetComponent = '';
         switch (this.props.ContentStore.selector.stype) {
