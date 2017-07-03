@@ -45,7 +45,6 @@ class Header extends React.Component {
     }
 
     render() {
-
         let loginButton = <button ref="loginButton" className="ui inverted button" onClick={this.handleLoginButton.bind(this)}>Sign In</button>;
         let mobileLoginButton = <a className="item" onClick={this.handleLoginButton.bind(this)}><i className="sign in icon"/> Sign in</a>;
         let notification_locale = '';
@@ -61,7 +60,7 @@ class Header extends React.Component {
             notification_locale = ''; ///*<UserNotificationsBadge className="ui item"/>*/
 
         } else{
-            notification_locale = <div className="item"><LocaleSwitcher mode ='icon' className = 'ui item'/></div>;
+            notification_locale = <div className="item"><LocaleSwitcher className = 'ui item'/></div>;
         }
 
         if (!this.state.user_cookies) {
@@ -79,10 +78,9 @@ class Header extends React.Component {
             {cookieBanner}
               <MediaQuery minDeviceWidth={768} values={{deviceWidth: 1600}}>
                 <div className="ui inverted blue menu" ref="header">
-                    <div className="ui container">
+                    <div className="ui fluid container">
                         <a className="item" href='/'>
-                            <img className="logo" src="/assets/images/slidewiki-square-notext-glow.svg" alt=""/>
-                            &nbsp; SlideWiki
+                            <img  src="/assets/images/slideWiki-logo-linear.png" alt="SlideWiki" style={{width: '200px'}}/>
                         </a>
                         <div className="item">
                             <SearchBox className="item"/>
@@ -128,8 +126,10 @@ class Header extends React.Component {
     }
 }
 
+
 Header.contextTypes = {
-    executeAction: React.PropTypes.func.isRequired
+    executeAction: React.PropTypes.func.isRequired,
+    getUser: React.PropTypes.func
 };
 
 Header = connectToStores(Header, [UserProfileStore], (context, props) => {

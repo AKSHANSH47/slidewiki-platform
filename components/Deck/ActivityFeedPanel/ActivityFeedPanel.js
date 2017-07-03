@@ -1,10 +1,10 @@
 import React from 'react';
-import { connectToStores } from 'fluxible-addons-react';
-import classNames from 'classnames/bind';
+import {NavLink} from 'fluxible-router';
+import {connectToStores} from 'fluxible-addons-react';
 import loadActivities from '../../../actions/activityfeed/loadActivities';
 import ActivityFeedStore from '../../../stores/ActivityFeedStore';
 import ActivityList from './ActivityList';
-import { isLocalStorageOn } from '../../../common.js';
+import {isLocalStorageOn} from '../../../common.js';
 
 class ActivityFeedPanel extends React.Component {
     componentWillMount() {
@@ -23,24 +23,20 @@ class ActivityFeedPanel extends React.Component {
     }
 
     render() {
-        let pointingMenu = '';
         let activityDIV = '';
-        let hrefPath = '/activities/' + this.props.ActivityFeedStore.selector.stype + '/' + this.props.ActivityFeedStore.selector.sid;
-        if (this.props.ActivityFeedStore.selector.stype === undefined || this.props.ActivityFeedStore.selector.sid === undefined) {
-            hrefPath = '';
-        }
+        const panelDIVStyles = {
+            maxHeight: 280,
+            overflowY: 'auto'
+        };
 
         activityDIV = <ActivityList />;
 
         return (
             <div ref="activityFeedPanel">
-                <div className="ui compact segments">
-                    <div className="ui secondary segment">
-                        <a href={hrefPath}>Activity Feed</a>
-                    </div>
-                    <div className="ui segment attached">
-                        {activityDIV}
-                    </div>
+                <h5 className="ui small header" tabIndex="0">Activity Feed
+                </h5>
+                <div className="ui basic segment" style={panelDIVStyles}>
+                    {activityDIV}
                 </div>
             </div>
         );

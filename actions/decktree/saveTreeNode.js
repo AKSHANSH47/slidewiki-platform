@@ -1,6 +1,7 @@
 import UserProfileStore from '../../stores/UserProfileStore';
 import serviceUnavailable from '../error/serviceUnavailable';
 import {navigateAction} from 'fluxible-router';
+import addActivity from '../activityfeed/addActivity';
 const log = require('../log/clog');
 
 export default function saveTreeNode(context, payload, done) {
@@ -11,7 +12,7 @@ export default function saveTreeNode(context, payload, done) {
         payload.userid = userid;
         context.service.update('decktree.nodeTitle', payload, {timeout: 20 * 1000}, (err, res) => {
             if (err) {
-                log.error(context, {filepath: __filename, err: err});
+                log.error(context, {filepath: __filename});
                 context.executeAction(serviceUnavailable, payload, done);
                 context.dispatch('SAVE_TREE_NODE_FAILURE', err);
             } else {
@@ -34,6 +35,15 @@ export default function saveTreeNode(context, payload, done) {
                 context.executeAction(navigateAction, {
                     url: newURL
                 });
+
+                //create new activity
+                let activity = {
+                    activity_type: 'edit',
+                    user_id: String(userid),
+                    content_id: String(newSid),
+                    content_kind: payload.selector.stype
+                };
+                context.executeAction(addActivity, {activity: activity});
             }
             done();
         });

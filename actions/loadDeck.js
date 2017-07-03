@@ -20,6 +20,7 @@ import loadPermissions from './permissions/loadPermissions';
 import resetPermissions from './permissions/resetPermissions';
 import loadLikes from './activityfeed/loadLikes';
 import PermissionsStore from '../stores/PermissionsStore';
+import loadContributors from './loadContributors';
 
 const log = require('./log/clog');
 
@@ -144,12 +145,20 @@ export default function loadDeck(context, payload, done) {
             }else{
                 callback();
             }
+        },
+        (callback) => {
+            if(runNonContentActions){
+                //this.context.executeAction(loadContributors, {params: this.props.ContentModulesStore.selector});
+                context.executeAction(loadContributors, payloadCustom, callback);
+            }else{
+                callback();
+            }
         }
     ],
     // final callback
     (err, results) => {
         if (err) {
-            log.error(context, {filepath: __filename, err: err});
+            log.error(context, {filepath: __filename});
             context.executeAction(serviceUnavailable, payload, done);
             return;
         }

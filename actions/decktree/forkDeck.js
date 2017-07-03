@@ -1,6 +1,7 @@
 import UserProfileStore from '../../stores/UserProfileStore';
 import {navigateAction} from 'fluxible-router';
 import serviceUnavailable from '../error/serviceUnavailable';
+import addActivity from '../activityfeed/addActivity';
 const log = require('../log/clog');
 
 export default function forkDeck(context, payload, done) {
@@ -15,7 +16,7 @@ export default function forkDeck(context, payload, done) {
         let selector = payload.selector;
         context.service.update('deck.fork', {deckId: selector.id, userid: userid}, null, {timeout: 30 * 1000}, (err, res) => {
             if (err) {
-                log.error(context, {filepath: __filename, err: err});
+                log.error(context, {filepath: __filename});
                 context.executeAction(serviceUnavailable, payload, done);
                 if (err.statusCode === 401) {
                     context.dispatch('FORK_DECK_FAILURE', err);
@@ -51,6 +52,15 @@ export default function forkDeck(context, payload, done) {
                 context.executeAction(navigateAction, {
                     url: newURL
                 });
+
+                //create new activity
+                let activity = {
+                    activity_type: 'fork',
+                    user_id: String(userid),
+                    content_id: selector.id,
+                    content_kind: 'deck'
+                };
+                context.executeAction(addActivity, {activity: activity});
             }
             done();
         }

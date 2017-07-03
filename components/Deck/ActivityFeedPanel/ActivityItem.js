@@ -3,6 +3,7 @@ import likeActivity from '../../../actions/activityfeed/likeActivity';
 import {formatDate} from './util/ActivityFeedUtil';
 import {navigateAction} from 'fluxible-router';
 import {connectToStores} from 'fluxible-addons-react';
+import cheerio from 'cheerio';
 import DeckTreeStore from '../../../stores/DeckTreeStore';
 import TreeUtil from '../../../components/Deck/TreePanel/util/TreeUtil';
 
@@ -52,12 +53,16 @@ class ActivityItem extends React.Component {
             fontStyle: 'italic',
             fontWeight: 400
         };
+        const cheerioContentName = (node.content_name !== undefined) ? cheerio.load(node.content_name).text() : '';
         const viewPath = ((node.content_kind === 'slide') ? '/deck/' + this.props.selector.id + '/slide/' : '/deck/') + node.content_id;
-        const nodeRef = (node.content_kind === this.props.selector.stype && node.content_id.split('-')[0] === this.props.selector.sid.split('-')[0]) ? (<span> {'this ' + node.content_kind} </span>) :  (<span>{node.content_kind + ' '}<a href={this.getPath(this.props.activity)} onClick={this.handleRefClick.bind(this)}>{node.content_name}</a></span>);
+        const nodeRef = (node.content_kind === this.props.selector.stype && node.content_id.split('-')[0] === this.props.selector.sid.split('-')[0]) ? (<span> {'this ' + node.content_kind} </span>) :  (<span>{node.content_kind + ' '}<a href={this.getPath(node)} onClick={this.handleRefClick.bind(this)}>{cheerioContentName}</a></span>);
 
+        if (node.user_id === '0') {
+            node.user_id = undefined;
+        }
         switch (node.activity_type) {
             case 'translate':
-                IconNode = (<i className="ui big translate icon"></i>);
+                IconNode = (<i className="ui large translate icon"></i>);
                 SummaryNode = (
                     <div className="summary">
                         <a className="user" href={node.user_id ? '/user/' + node.user_id : ''}>
@@ -71,20 +76,20 @@ class ActivityItem extends React.Component {
                 );
                 break;
             case 'share':
-                IconNode = (<i className="ui big slideshare icon"></i>);
+                IconNode = (<i className="ui large share alternate icon"></i>);
+                const onPlatform = (node.share_info.platform === 'E-mail') ? 'by E-mail' : (' on ' + node.share_info.platform);
                 SummaryNode = (
-                    <div className="summary">
+                    <div className="description">
                         <a className="user" href={node.user_id ? '/user/' + node.user_id : ''}>
                             {node.author ? node.author.username : 'unknown'}
-                        </a> {'shared '} {nodeRef} {' on '}
-                        <a target="_blank" href={node.share_info.postURI}>{node.share_info.platform}</a>
+                        </a> {'shared '} {nodeRef} {onPlatform}
                         <br/>
                         {DateDiv}
                     </div>
                 );
                 break;
             case 'add':
-                IconNode = (<i className="ui big write icon"></i>);
+                IconNode = (<i className="ui large write icon"></i>);
                 SummaryNode = (
                     <div className="summary">
                         <a className="user" href={node.user_id ? '/user/' + node.user_id : ''}>
@@ -96,7 +101,7 @@ class ActivityItem extends React.Component {
                 );
                 break;
             case 'edit':
-                IconNode = (<i className="ui big edit icon"></i>);
+                IconNode = (<i className="ui large edit icon"></i>);
                 SummaryNode = (
                     <div className="summary">
                         <a className="user" href={node.user_id ? '/user/' + node.user_id : ''}>
@@ -108,7 +113,7 @@ class ActivityItem extends React.Component {
                 );
                 break;
             case 'comment':
-                IconNode = (<i className="ui big comment outline icon"></i>);
+                IconNode = (<i className="ui large comment outline icon"></i>);
                 SummaryNode = (
                     <div className="summary">
                         <a className="user" href={node.user_id ? '/user/' + node.user_id : ''}>
@@ -137,7 +142,7 @@ class ActivityItem extends React.Component {
                 );
                 break;
             case 'use':
-                IconNode = (<i className="ui big copy icon"></i>);
+                IconNode = (<i className="ui large copy icon"></i>);
                 SummaryNode = (
                     <div className="summary">
                         <a className="user" href={node.user_id ? '/user/' + node.user_id : ''}>
@@ -150,7 +155,7 @@ class ActivityItem extends React.Component {
                 );
                 break;
             case 'rate'://TODO modify rate display
-                IconNode = (<i className="ui big empty star icon"></i>);
+                IconNode = (<i className="ui large empty star icon"></i>);
                 SummaryNode = (
                     <div className="summary">
                         <a className="user" href={node.user_id ? '/user/' + node.user_id : ''}>
@@ -162,7 +167,7 @@ class ActivityItem extends React.Component {
                 );
                 break;
             case 'react'://TODO modify react display
-                IconNode = (<i className="ui big thumbs outline up icon"></i>);
+                IconNode = (<i className="ui large thumbs outline up icon"></i>);
                 SummaryNode = (
                     <div className="summary">
                         <a className="user" href={node.user_id ? '/user/' + node.user_id : ''}>
@@ -174,7 +179,7 @@ class ActivityItem extends React.Component {
                 );
                 break;
             case 'download':
-                IconNode = (<i className="ui big download icon"></i>);
+                IconNode = (<i className="ui large download icon"></i>);
                 SummaryNode = (
                     <div className="summary">
                         <a className="user" href={node.user_id ? '/user/' + node.user_id : ''}>
@@ -185,8 +190,20 @@ class ActivityItem extends React.Component {
                     </div>
                 );
                 break;
+            case 'fork':
+                IconNode = (<i className="ui large fork icon"></i>);
+                SummaryNode = (
+                    <div className="summary">
+                        <a className="user" href={node.user_id ? '/user/' + node.user_id : ''}>
+                            {node.author ? node.author.username : 'unknown'}
+                        </a> {'forked '} {nodeRef}
+                        <br/>
+                        {DateDiv}
+                    </div>
+                );
+                break;
             default:
-                IconNode = (<i className="ui big warning icon"></i>);
+                IconNode = (<i className="ui large warning icon"></i>);
                 SummaryNode = (
                     <div className="summary">
                         Unknown type of activity - {node.activity_type}

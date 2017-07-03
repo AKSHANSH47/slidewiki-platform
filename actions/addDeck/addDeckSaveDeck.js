@@ -15,12 +15,12 @@ export default function addDeckSaveDeck(context, payload, done) {
         context.service.create('deck.create', payload, null, {timeout: 30 * 1000}, (err, res) => {
             //console.log('Action addDeckSaveDeck: got', err, res);
             if (err) {
-                log.error(context, {filepath: __filename, err: err});
+                log.error(context, {filepath: __filename});
                 context.executeAction(serviceUnavailable, payload, done);
                 context.dispatch('CREATION_FAILURE', err);
             } else {
                 context.dispatch('CREATION_SUCCESS', res);
-                createAction(res);
+                createActivity(res);
             }
             done();
         });
@@ -29,23 +29,25 @@ export default function addDeckSaveDeck(context, payload, done) {
         context.service.update('deck.update', payload, null, {timeout: 30 * 1000}, (err, res) => {
             //console.log('Action addDeckSaveDeck: got', err, res);
             if (err) {
-                log.error(context, {filepath: __filename, err: err});
+                log.error(context, {filepath: __filename});
                 context.executeAction(serviceUnavailable, payload, done);
                 context.dispatch('CREATION_FAILURE', err);
             } else {
                 context.dispatch('CREATION_SUCCESS', res);
-                createAction(res);
+                createActivity(res);
             }
             done();
         });
     }
 }
 
-function createAction(deck) {
+function createActivity(deck) {
     let activity = {
         activity_type: 'add',
         user_id: String(deck.user),
-        content_id: deck.id ? String(deck.id) : String(deck._id),
+        content_id: deck.id ? (String(deck.id) + '-1'): (String(deck._id) + '-1'),
+        content_name: deck.revisions[0].title,
+        content_owner_id: String(deck.user),
         content_kind: 'deck'
     };
     context.executeAction(addActivity, {activity: activity});

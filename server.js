@@ -18,7 +18,6 @@ import {navigateAction} from 'fluxible-router';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import app from './app';
-import HTMLComponent from './components/DefaultHTMLLayout';
 import { createElementWithContext } from 'fluxible-addons-react';
 import { locales } from './configs/general'; //a list of supported locales, defines also the localeSwitcher component
 import Cookie from 'js-cookie';
@@ -59,11 +58,15 @@ server.use('/es6-shim', express.static(path.join(__dirname, '/node_modules/es6-s
 server.use('/jquery', express.static(path.join(__dirname, '/node_modules/jquery')));
 server.use('/sweetalert2', express.static(path.join(__dirname, '/node_modules/sweetalert2')));
 server.use('/headjs', express.static(path.join(__dirname, '/node_modules/headjs')));
+server.use('/glidejs', express.static(path.join(__dirname, '/node_modules/glidejs')));
 
 server.use('/ckeditor', express.static(path.join(__dirname, 'node_modules/ckeditor')));
 server.use('/ckeditor-plugins/youtube', express.static(path.join(__dirname, 'node_modules/ckeditor-youtube-plugin/youtube')));
 server.use('/ckeditor-plugins/lineheight', express.static(path.join(__dirname, 'node_modules/ckeditor-lineheight-plugin')));
 server.use('/mathjax', express.static(path.join(__dirname, 'node_modules/mathjax')));
+server.use('/jquery-ui-dist', express.static(path.join(__dirname, 'node_modules/jquery-ui-dist')));
+server.use('/jquery-contextmenu', express.static(path.join(__dirname, 'node_modules/jquery-contextmenu')));
+server.use('/font-awesome', express.static(path.join(__dirname, 'node_modules/font-awesome')));
 
 //server.use(csrf({cookie: true}));
 // Get access to the fetchr plugin instance
